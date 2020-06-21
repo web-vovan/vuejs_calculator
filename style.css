@@ -72,8 +72,9 @@ h1 {
 	font-size: 30px;
 	padding: 10px 15px;
 	color: #fff;
-	height: 57px;
-
+	min-height: 57px;
+	height: auto;
+	word-break: break-all;
 }
 .calc__error {
 	position: absolute;
