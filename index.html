@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1 maximum-scale=1"/> 
+	<title>Vue.js calculator</title>
+	<link rel="stylesheet" href="/style.css">
+	<link href="https://fonts.googleapis.com/css2?family=Ubuntu&display=swap" rel="stylesheet">
+	<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+</head>
+<body>
+
+	<div id="app">
+		<h1>Vue.js calculator</h1>
+		<div class="calc">
+			<div class="row">
+				<div class="calc__error" v-show="error">syntax error</div>
+				<div class="calc__result col">{{expression}}</div>
+			</div>
+			<div class="row">
+				<div class="calc__data col-10">
+					<div class="row">
+						<div class="calc__btn col-4" v-on:click="addSymbol">7</div>
+						<div class="calc__btn col-4" v-on:click="addSymbol">8</div>
+						<div class="calc__btn col-4" v-on:click="addSymbol">9</div>
+					</div>
+					<div class="row">
+						<div class="calc__btn col-4" v-on:click="addSymbol">4</div>
+						<div class="calc__btn col-4" v-on:click="addSymbol">5</div>
+						<div class="calc__btn col-4" v-on:click="addSymbol">6</div>
+					</div>
+					<div class="row">
+						<div class="calc__btn col-4" v-on:click="addSymbol">1</div>
+						<div class="calc__btn col-4" v-on:click="addSymbol">2</div>
+						<div class="calc__btn col-4" v-on:click="addSymbol">3</div>
+					</div>
+					<div class="row">
+						<div class="calc__btn col-8" v-on:click="addSymbol">0</div>
+						<div class="calc__btn col-4" v-on:click="addSymbol">.</div>
+					</div>
+				</div>
+				<div class="calc__operation col-2">
+					<div class="calc__btn col" v-on:click="addSymbol">+</div>
+					<div class="calc__btn col" v-on:click="addSymbol">-</div>
+					<div class="calc__btn col" v-on:click="addSymbol">*</div>
+					<div class="calc__btn col" v-on:click="addSymbol">/</div>
+				</div>
+				<div class="row">
+					<div class="calc__btn calc__submit col-10" v-on:click="getResult" v-on:keyup.enter="getResult">=</div>
+					<div class="calc__btn calc__remove col-2" v-on:click="removeSymbol" v-on:keyup.enter="removeSymbol">←</div>
+				</div>	 	
+			</div>
+		</div>	
+	</div>
+
+	<script>
+		let calc = new Vue({
+			el: '.calc',
+			data: {
+				expression: '',
+				error: false
+			},
+			created() {
+				document.addEventListener('keydown', this.keyHandling);
+			},
+			methods: {
+				addSymbol(event, keyboard = false) {
+					let val = (keyboard) ? event.key : event.target.innerText;
+					this.expression += val;
+				},
+				removeSymbol() {
+					this.expression = String(this.expression);
+
+					if (this.expression.length > 0) {
+						this.expression = this.expression.slice(0, -1);
+					}
+				},
+				getResult() {
+					try {
+						let result = eval(this.expression);
+						this.expression = result;
+					}
+					catch {
+						this.error = true;
+						setTimeout(() => this.error = false, 1500);
+					}	
+				},
+				backLight(value) {
+					let allBtn = document.querySelectorAll('.calc__btn');
+
+					if (value === 'Enter') {
+						value = '=';
+					}
+
+					if (value === 'Backspace') {
+						value = '←';
+					}
+
+					allBtn.forEach(function(item) {
+						if (item.innerText === value) {
+							item.classList.add('calc__btn_active');
+							setTimeout(() => item.classList.remove('calc__btn_active'), 200);
+						}
+					});	
+				},
+				keyHandling(e) {
+					let keyCode = e.keyCode;
+
+					switch (keyCode) {
+						case 13:
+							this.getResult();
+							this.backLight(e.key);
+							break;
+						case 8:
+							this.removeSymbol();
+							this.backLight(e.key);
+							break;
+						case 96:
+						case 97:	
+						case 98:	
+						case 99:	
+						case 100:	
+						case 101:	
+						case 102:	
+						case 103:	
+						case 104:	
+						case 105:	
+						case 106:	
+						case 107:	
+						case 109:	
+						case 110:	
+						case 111:	
+							this.addSymbol(e, true);
+							this.backLight(e.key);
+							break;
+						default:
+							break;
+					}
+				}
+			}
+		});
+	</script>
+</body>
+</html>
